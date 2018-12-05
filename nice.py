@@ -117,6 +117,11 @@ while(len(alreadyVisitedAntenna)<nbAntennas and len(alreadyVisitedDistribution)<
     if len(boucle) < 30:
         boucle.append(newAntenna)
         alreadyVisitedAntenna.append(newAntenna)
+        if (len(alreadyVisitedAntenna)==nbAntennas):
+            architecture.append([boucle])
+            for i in range(nbDistribution):
+                if i not in alreadyVisitedDistribution:
+                    architecture.append([[i]])
     else:
         architecture.append([boucle]) # On possède une liste de liste de liste à laquelle on ajoute les boucles ainsi créées, puis à laquelle on ajoutera les chaines plus tard. Un élément de architecture est un réseau, un élément d'un réseau est une boucle ou une chaine, et un élement d'une boucle ou d'une chaine est une antenne ou une distribution.
         while(newDistribution in alreadyVisitedDistribution or node_list_nice[newDistribution][2] != 'distribution'):
@@ -124,9 +129,6 @@ while(len(alreadyVisitedAntenna)<nbAntennas and len(alreadyVisitedDistribution)<
         alreadyVisitedDistribution.append(newDistribution)
         newAntenna = newDistribution
         boucle = [newDistribution]
-
-if(len(boucle)<30):
-    architecture.append([boucle])
 
 while(len(alreadyVisitedAntenna)<nbAntennas):
     instance = 1
