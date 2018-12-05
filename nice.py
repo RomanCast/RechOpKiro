@@ -127,7 +127,6 @@ while(len(alreadyVisitedAntenna)<nbAntennas and len(alreadyVisitedDistribution)<
         while(newDistribution in alreadyVisitedDistribution or node_list_nice[newDistribution][2] != 'distribution'):
             newDistribution += 1
         alreadyVisitedDistribution.append(newDistribution)
-        newAntenna = newDistribution
         boucle = [newDistribution]
 
 while(len(alreadyVisitedAntenna)<nbAntennas):
@@ -146,15 +145,15 @@ def write_solution(architecture):
     for i in range(nbDistribution):
         for j in range(len(architecture[i])):
             if (j==0):
-                solution.write('b ')
+                solution.write('b')
                 for k in range(len(architecture[i][j])):
-                    solution.write('%d' %architecture[i][j][k] + ' ')
+                    solution.write(' ' + '%d' %architecture[i][j][k])
                 solution.write("\n")
 
             else:
-                solution.write('c ')
+                solution.write('c')
                 for k in range(len(architecture[i][j])):
-                    solution.write('%d' %architecture[i][j][k] + ' ')
+                    solution.write(' ' + '%d' %architecture[i][j][k])
                 solution.write("\n")
 
 

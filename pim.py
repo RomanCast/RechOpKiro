@@ -124,12 +124,12 @@ while(len(alreadyVisitedAntenna)<nbAntennas and len(alreadyVisitedDistribution)<
             for i in range(nbDistribution):
                 if i not in alreadyVisitedDistribution:
                     architecture.append([[i]])
+            break
     else:
         architecture.append([boucle]) # On possède une liste de liste de liste à laquelle on ajoute les boucles ainsi créées, puis à laquelle on ajoutera les chaines plus tard. Un élément de architecture est un réseau, un élément d'un réseau est une boucle ou une chaine, et un élement d'une boucle ou d'une chaine est une antenne ou une distribution.
         while((newDistribution<=nbDistribution) and (newDistribution in alreadyVisitedDistribution or node_list_pim[newDistribution][2] != 'distribution')):
             newDistribution += 1
         alreadyVisitedDistribution.append(newDistribution)
-        newAntenna = newDistribution
         boucle = [newDistribution]
 
 while(len(alreadyVisitedAntenna)<nbAntennas):
@@ -148,15 +148,15 @@ def write_solution(architecture):
     for i in range(nbDistribution):
         for j in range(len(architecture[i])):
             if (j==0):
-                solution.write('b ')
+                solution.write('b')
                 for k in range(len(architecture[i][j])):
-                    solution.write('%d' %architecture[i][j][k] + ' ')
+                    solution.write(' ' + '%d' %architecture[i][j][k])
                 solution.write("\n")
 
             else:
-                solution.write('c ')
+                solution.write('c')
                 for k in range(len(architecture[i][j])):
-                    solution.write('%d' %architecture[i][j][k] + ' ')
+                    solution.write(' ' + '%d' %architecture[i][j][k])
                 solution.write("\n")
 
 
