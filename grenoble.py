@@ -12,15 +12,15 @@ import csv
 
 # LECTURE FICHIERS
 
-dist_G = open('/Users/clementgrisi/Document2/imi/kiro/grenoble/distances.csv', 'r')
-nodes_G = open('/Users/clementgrisi/Document2/imi/kiro/grenoble/nodes.csv', 'r')
+dist_G = open('grenoble/distances.csv', 'r')
+nodes_G = open('grenoble/nodes.csv', 'r')
 
 
 # PARSING NODES
 
 node_list_grenoble = [] # liste des noeuds sour la forme [ [x, y, 'type'], ...]
 
-with open('/Users/clementgrisi/Document2/imi/kiro/grenoble/nodes.csv', 'r') as nodes_grenoble:
+with open('grenoble/nodes.csv', 'r') as nodes_grenoble:
     nodes = csv.reader(nodes_grenoble, delimiter=';')
     next(nodes)
     for row in nodes:
@@ -47,14 +47,14 @@ for L in dist_G.readlines():
 def takeFirst(elem):
     return elem[0]
 
-test1 = [ [[] for x in range(nbnode_grenoble)] for y in range(nbnode_grenoble)] 
+test1 = [ [[] for x in range(nbnode_grenoble)] for y in range(nbnode_grenoble)]
 
 for i in range(nbnode_grenoble):
     for j in range(nbnode_grenoble):
         test1[i][j] = [DistancesGrenoble[i][j], j]
     test1[i] = sorted(test1[i], key=takeFirst)
 
-test2 = [ [0 for x in range(nbnode_grenoble)] for y in range(nbnode_grenoble)] 
+test2 = [ [0 for x in range(nbnode_grenoble)] for y in range(nbnode_grenoble)]
 
 for i in range(nbnode_grenoble):
     for j in range(nbnode_grenoble):
@@ -66,7 +66,7 @@ for i in range(nbnode_grenoble):
         node_list_grenoble_sorted[i][j]=(test2[i][j], node_list_grenoble[test2[i][j]][2])
 
 #%% CREATION SOLUTION REALISABLE
-        
+
 def insert_plus_proche(antenne,Reseau):
     noeud_proche = Reseau[0][0]
     d_min = DistancesGrenoble[Reseau[0][0]][antenne]
@@ -128,7 +128,7 @@ while(len(alreadyVisitedAntenna)<nbAntennas and len(alreadyVisitedDistribution)<
         alreadyVisitedDistribution.append(newDistribution)
         newAntenna = newDistribution
         boucle = [newDistribution]
-        
+
 
 while(len(alreadyVisitedAntenna)<nbAntennas):
     instance = 0

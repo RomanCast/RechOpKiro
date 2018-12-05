@@ -12,15 +12,15 @@ import csv
 
 # LECTURE FICHIERS
 
-dist_n = open('/Users/clementgrisi/Document2/imi/kiro/nice/distances.csv', 'r')
-nodes_n = open('/Users/clementgrisi/Document2/imi/kiro/nice/nodes.csv', 'r')
+dist_n = open('nice/distances.csv', 'r')
+nodes_n = open('nice/nodes.csv', 'r')
 
 
 # PARSING NODES
 
 node_list_nice = [] # liste des noeuds sour la forme [ [x, y, 'type'], ...]
 
-with open('/Users/clementgrisi/Document2/imi/kiro/nice/nodes.csv', 'r') as nodes_nice:
+with open('nice/nodes.csv', 'r') as nodes_nice:
     nodes = csv.reader(nodes_nice, delimiter=';')
     next(nodes)
     for row in nodes:
@@ -47,14 +47,14 @@ for L in dist_n.readlines():
 def takeFirst(elem):
     return elem[0]
 
-test1 = [ [[] for x in range(nbnode_nice)] for y in range(nbnode_nice)] 
+test1 = [ [[] for x in range(nbnode_nice)] for y in range(nbnode_nice)]
 
 for i in range(nbnode_nice):
     for j in range(nbnode_nice):
         test1[i][j] = [DistancesNice[i][j], j]
     test1[i] = sorted(test1[i], key=takeFirst)
 
-test2 = [ [0 for x in range(nbnode_nice)] for y in range(nbnode_nice)] 
+test2 = [ [0 for x in range(nbnode_nice)] for y in range(nbnode_nice)]
 
 for i in range(nbnode_nice):
     for j in range(nbnode_nice):
@@ -66,7 +66,7 @@ for i in range(nbnode_nice):
         node_list_nice_sorted[i][j]=(test2[i][j], node_list_nice[test2[i][j]][2])
 
 #%% CREATION SOLUTION REALISABLE
-        
+
 def insert_plus_proche(antenne,Reseau):
     noeud_proche = Reseau[0][0]
     d_min = DistancesNice[Reseau[0][0]][antenne]
@@ -124,7 +124,7 @@ while(len(alreadyVisitedAntenna)<nbAntennas and len(alreadyVisitedDistribution)<
         alreadyVisitedDistribution.append(newDistribution)
         newAntenna = newDistribution
         boucle = [newDistribution]
-        
+
 if(len(boucle)<30):
     architecture.append([boucle])
 

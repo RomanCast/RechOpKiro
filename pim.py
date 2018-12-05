@@ -13,15 +13,15 @@ import csv
 
 # LECTURE FICHIERS
 
-dist_p = open('/Users/clementgrisi/Document2/imi/kiro/pim/distances.csv', 'r')
-nodes_p = open('/Users/clementgrisi/Document2/imi/kiro/pim/nodes.csv', 'r')
+dist_p = open('pim/distances.csv', 'r')
+nodes_p = open('pim/nodes.csv', 'r')
 
 
 # PARSING NODES
 
 node_list_pim = [] # liste des noeuds sour la forme [ [x, y, 'type'], ...]
 
-with open('/Users/clementgrisi/Document2/imi/kiro/pim/nodes.csv', 'r') as nodes_pim:
+with open('pim/nodes.csv', 'r') as nodes_pim:
     nodes = csv.reader(nodes_pim, delimiter=';')
     next(nodes)
     for row in nodes:
@@ -40,7 +40,7 @@ for L in dist_p.readlines():
     j = ligne - nbnode_pim*i
     DistancesPim[i][j] = int(L)
     ligne += 1
-    
+
 #%% CREATING THE LIST OF CLOSEST NODES (node_list_pim_sorted)
 
 # node_list_pim_sorted[i] = liste des noeuds les plus proches du noeud i
@@ -48,14 +48,14 @@ for L in dist_p.readlines():
 def takeFirst(elem):
     return elem[0]
 
-test1 = [ [[] for x in range(nbnode_pim)] for y in range(nbnode_pim)] 
+test1 = [ [[] for x in range(nbnode_pim)] for y in range(nbnode_pim)]
 
 for i in range(nbnode_pim):
     for j in range(nbnode_pim):
         test1[i][j] = [DistancesPim[i][j], j]
     test1[i] = sorted(test1[i], key=takeFirst)
 
-test2 = [ [0 for x in range(nbnode_pim)] for y in range(nbnode_pim)] 
+test2 = [ [0 for x in range(nbnode_pim)] for y in range(nbnode_pim)]
 
 for i in range(nbnode_pim):
     for j in range(nbnode_pim):
@@ -125,7 +125,7 @@ while(len(alreadyVisitedAntenna)<nbAntennas and len(alreadyVisitedDistribution)<
         alreadyVisitedDistribution.append(newDistribution)
         newAntenna = newDistribution
         boucle = [newDistribution]
-        
+
 #if(len(boucle)<30):
 #    architecture.append([boucle])
 
@@ -152,14 +152,14 @@ for i in range(nbDistribution):
             for k in range(len(architecture[i][j])):
                 architectureStr[i][j].append(str(architecture[i][j][k]))
                 print("",architecture[i][j][k], end="")
-                
+
         else:
             print('c', end="")
             compteur +=1
             for k in range(len(architecture[i][j])):
                 architectureStr[i][j].append(str(architecture[i][j][k]))
                 print("",architecture[i][j][k], end="")
-                
+
 print("")
 print(compteur, " ", nbnode_pim)
 
