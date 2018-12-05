@@ -141,4 +141,22 @@ while(len(alreadyVisitedAntenna)<nbAntennas):
     insert_plus_proche(newAntenna, reseau)
     architecture[0] = reseau
 
-print(architecture)
+def write_solution(architecture):
+    solution = open('solutions/grenoble.txt', 'w+')
+    solution.truncate(0)
+    for i in range(nbDistribution):
+        for j in range(len(architecture[i])):
+            if (j==0):
+                solution.write('b ')
+                for k in range(len(architecture[i][j])):
+                    solution.write('%d' %architecture[i][j][k] + ' ')
+                solution.write("\n")
+
+            else:
+                solution.write('c ')
+                for k in range(len(architecture[i][j])):
+                    solution.write('%d' %architecture[i][j][k] + ' ')
+                solution.write("\n")
+
+
+write_solution(architecture)

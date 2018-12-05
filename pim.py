@@ -143,7 +143,7 @@ while(len(alreadyVisitedAntenna)<nbAntennas):
     architecture[0] = reseau
 
 def write_solution(architecture):
-    solution = open('solutions/pim.txt', 'r+')
+    solution = open('solutions/pim.txt', 'w+')
     solution.truncate(0)
     for i in range(nbDistribution):
         for j in range(len(architecture[i])):
@@ -161,7 +161,3 @@ def write_solution(architecture):
 
 
 write_solution(architecture)
-
-#print(" ".join(architectureStr))
-#for k in range(nbDistribution):
-#    print('b', " ".join(architectureStr[]))
