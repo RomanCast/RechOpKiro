@@ -118,6 +118,11 @@ while(len(alreadyVisitedAntenna)<nbAntennas and len(alreadyVisitedDistribution)<
     if len(boucle) < 30:
         boucle.append(newAntenna)
         alreadyVisitedAntenna.append(newAntenna)
+        if (len(alreadyVisitedAntenna)==nbAntennas):
+            architecture.append([boucle])
+            for i in range(nbDistribution):
+                if i not in alreadyVisitedDistribution:
+                    architecture.append([[i]])
     else:
         architecture.append([boucle])
         while((newDistribution<=nbDistribution) and (newDistribution in alreadyVisitedDistribution or node_list_pim[newDistribution][2] != 'distribution')):
@@ -125,9 +130,6 @@ while(len(alreadyVisitedAntenna)<nbAntennas and len(alreadyVisitedDistribution)<
         alreadyVisitedDistribution.append(newDistribution)
         newAntenna = newDistribution
         boucle = [newDistribution]
-
-#if(len(boucle)<30):
-#    architecture.append([boucle])
 
 while(len(alreadyVisitedAntenna)<nbAntennas):
     instance = 1
@@ -139,29 +141,49 @@ while(len(alreadyVisitedAntenna)<nbAntennas):
     insert_plus_proche(newAntenna, reseau)
     architecture[0] = reseau
 
+def write_solution(architecture):
+    solution = open('solutions/pim.txt', 'r+')
+    solution.truncate(0)
+    for i in range(nbDistribution):
+        for j in range(len(architecture[i])):
+            if (j==0):
+                solution.write('b ')
+                for k in range(len(architecture[i][j])):
+                    solution.write('%d' %architecture[i][j][k] + ' ')
+                solution.write("\n")
 
-compteur = 0
-architectureStr = []
-for i in range(nbDistribution):
-    architectureStr.append([])
-    for j in range(len(architecture[i])):
-        architectureStr[i].append([])
-        print("\n", end="")
-        if j == 0:
-            print('b', end="")
-            for k in range(len(architecture[i][j])):
-                architectureStr[i][j].append(str(architecture[i][j][k]))
-                print("",architecture[i][j][k], end="")
+            else:
+                solution.write('c ')
+                for k in range(len(architecture[i][j])):
+                    solution.write('%d' %architecture[i][j][k] + ' ')
+                solution.write("\n")
 
-        else:
-            print('c', end="")
-            compteur +=1
-            for k in range(len(architecture[i][j])):
-                architectureStr[i][j].append(str(architecture[i][j][k]))
-                print("",architecture[i][j][k], end="")
 
-print("")
-print(compteur, " ", nbnode_pim)
+write_solution(architecture)
+
+#
+# compteur = 0
+# architectureStr = []
+# for i in range(nbDistribution):
+#     architectureStr.append([])
+#     for j in range(len(architecture[i])):
+#         architectureStr[i].append([])
+#         print("\n", end="")
+#         if j == 0:
+#             print('b', end="")
+#             for k in range(len(architecture[i][j])):
+#                 architectureStr[i][j].append(str(architecture[i][j][k]))
+#                 print("",architecture[i][j][k], end="")
+#
+#         else:
+#             print('c', end="")
+#             compteur +=1
+#             for k in range(len(architecture[i][j])):
+#                 architectureStr[i][j].append(str(architecture[i][j][k]))
+#                 print("",architecture[i][j][k], end="")
+#
+# print("")
+# print(compteur, " ", nbnode_pim)
 
 #print(" ".join(architectureStr))
 #for k in range(nbDistribution):
