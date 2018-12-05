@@ -117,6 +117,11 @@ while(len(alreadyVisitedAntenna)<nbAntennas and len(alreadyVisitedDistribution)<
     if len(boucle) < 30:
         boucle.append(newAntenna)
         alreadyVisitedAntenna.append(newAntenna)
+        if (len(alreadyVisitedAntenna)==nbAntennas):
+            architecture.append([boucle])
+            for i in range(nbDistribution):
+                if i not in alreadyVisitedDistribution:
+                    architecture.append([[i]])
     else:
         architecture.append([boucle])
         while(newDistribution in alreadyVisitedDistribution or node_list_nice[newDistribution][2] != 'distribution'):
@@ -124,9 +129,6 @@ while(len(alreadyVisitedAntenna)<nbAntennas and len(alreadyVisitedDistribution)<
         alreadyVisitedDistribution.append(newDistribution)
         newAntenna = newDistribution
         boucle = [newDistribution]
-
-if(len(boucle)<30):
-    architecture.append([boucle])
 
 while(len(alreadyVisitedAntenna)<nbAntennas):
     instance = 1
