@@ -161,30 +161,6 @@ def write_solution(architecture):
 
 write_solution(architecture)
 
-#
-# compteur = 0
-# architectureStr = []
-# for i in range(nbDistribution):
-#     architectureStr.append([])
-#     for j in range(len(architecture[i])):
-#         architectureStr[i].append([])
-#         print("\n", end="")
-#         if j == 0:
-#             print('b', end="")
-#             for k in range(len(architecture[i][j])):
-#                 architectureStr[i][j].append(str(architecture[i][j][k]))
-#                 print("",architecture[i][j][k], end="")
-#
-#         else:
-#             print('c', end="")
-#             compteur +=1
-#             for k in range(len(architecture[i][j])):
-#                 architectureStr[i][j].append(str(architecture[i][j][k]))
-#                 print("",architecture[i][j][k], end="")
-#
-# print("")
-# print(compteur, " ", nbnode_pim)
-
 #print(" ".join(architectureStr))
 #for k in range(nbDistribution):
 #    print('b', " ".join(architectureStr[]))
