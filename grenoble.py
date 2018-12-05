@@ -118,7 +118,9 @@ while(len(alreadyVisitedAntenna)<nbAntennas and len(alreadyVisitedDistribution)<
         alreadyVisitedAntenna.append(newAntenna)
         if (len(alreadyVisitedAntenna)==nbAntennas):
             architecture.append([boucle])
-            
+            for i in range(nbDistribution):
+                if i not in alreadyVisitedDistribution:
+                    architecture.append([[i]])
     else:
         architecture.append([boucle])
         while(newDistribution in alreadyVisitedDistribution or node_list_grenoble[newDistribution][2] != 'distribution'):
@@ -127,12 +129,10 @@ while(len(alreadyVisitedAntenna)<nbAntennas and len(alreadyVisitedDistribution)<
         newAntenna = newDistribution
         boucle = [newDistribution]
         
-if(len(boucle)<30):
-    architecture.append([boucle])
 
 while(len(alreadyVisitedAntenna)<nbAntennas):
-    instance = 1
-    while (node_list_grenoble[instance][0] in alreadyVisitedAntenna or node_list_grenoble[instance][1] == 'distribution'):
+    instance = 0
+    while (instance in alreadyVisitedAntenna or node_list_grenoble[instance][2] == 'distribution'):
         instance += 1
     newAntenna = instance
     alreadyVisitedAntenna.append(newAntenna)
