@@ -69,7 +69,7 @@ for i in range(nbnode_pim):
 
 #%% CONTRUCTION ARCHITECTURE D'UNE SOLUTION REALISABLE
 
-def insert_plus_proche(antenne,Reseau): # Cette fonction insère dans un réseau (i.e. une boucle et ses chaines) un élément en l'accrochant au plus proche élément et en créant donc une nouvelle chaine ou en complétant une dejà existante
+def insert_plus_proche(antenne, Reseau): # Cette fonction insère dans un réseau (i.e. une boucle et ses chaines) un élément en l'accrochant au plus proche élément et en créant donc une nouvelle chaine ou en complétant une dejà existante
     noeud_proche = Reseau[0][0]
     d_min = DistancesPim[Reseau[0][0]][antenne]
     num_chem = 0
@@ -87,8 +87,6 @@ def insert_plus_proche(antenne,Reseau): # Cette fonction insère dans un réseau
         Reseau.append([noeud_proche, antenne])
     else:
         Reseau[num_chem].append(antenne)
-
-
 
 alreadyVisitedAntenna = []
 alreadyVisitedDistribution = []
