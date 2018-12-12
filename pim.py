@@ -10,6 +10,7 @@ Created on Thu Nov 29 16:00:00 2018
 
 import numpy as np
 import csv
+from utils import *
 
 # LECTURE FICHIERS
 
@@ -160,4 +161,4 @@ def write_solution(architecture):
                 solution.write("\n")
 
 
-write_solution(architecture)
+write_solution(architecture, nbDistribution, 'pim')
