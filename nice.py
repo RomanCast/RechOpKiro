@@ -9,6 +9,7 @@ Created on Thu Nov 29 15:57:56 2018
 
 import numpy as np
 import csv
+import re
 from utils import *
 
 # LECTURE FICHIERS
@@ -140,4 +141,20 @@ while(len(alreadyVisitedAntenna)<nbAntennas):
     insert_plus_proche(newAntenna, reseau)
     architecture[0] = reseau
 
-write_solution(architecture, nbDistribution, 'nice')
+
+arch = [ [[0, 13, 10, 4, 6, 8, 14, 12, 17, 22, 20, 24, 29, 30, 33, 39, 45, 40, 36, 34, 38, 47, 51, 52, 55, 60, 58, 54, 44, 35]], [[1, 32, 31, 27, 23, 16, 19, 21, 25, 57, 43, 41, 46, 59, 62, 61, 63, 64, 67, 66, 65, 26, 28, 42, 48, 49, 50, 53, 56, 37]], [[2, 18, 11, 9, 5, 3, 7, 15]]]
+print('cout depart')
+print(cout_architecture(arch, DistancesNice))
+reseau1 = arch.pop(0)
+reseau2 = arch.pop(0)
+reseau3 = arch.pop(0)
+test1 = descente_rap_reseau(reseau1, DistancesNice, 100)
+test2 = descente_rap_reseau(reseau2, DistancesNice, 100)
+test3 = descente_rap_reseau(reseau3, DistancesNice, 100)
+arch = [test1] + [test2] + [test3]
+#architecture = [test1] + [test2] + [test3]
+print('cout arrivee')
+print(cout_architecture(arch, DistancesNice))
+
+#print(architecture)
+#write_solution(arch, nbDistribution, 'nice')

@@ -141,22 +141,34 @@ while(len(alreadyVisitedAntenna)<nbAntennas):
     insert_plus_proche(newAntenna, reseau)
     architecture[0] = reseau
 
-def write_solution(architecture):
-    solution = open('solutions/pim.txt', 'w+')
-    solution.truncate(0)
-    for i in range(nbDistribution):
-        for j in range(len(architecture[i])):
-            if (j==0):
-                solution.write('b')
-                for k in range(len(architecture[i][j])):
-                    solution.write(' ' + '%d' %architecture[i][j][k])
-                solution.write("\n")
 
-            else:
-                solution.write('c')
-                for k in range(len(architecture[i][j])):
-                    solution.write(' ' + '%d' %architecture[i][j][k])
-                solution.write("\n")
-
+print('cout depart')
+print(cout_architecture(architecture, DistancesPim))
+# test = descente_rap_architecture(architecture, DistancesPim, 500)
+reseau1 = architecture.pop(0)
+reseau2 = architecture.pop(0)
+reseau3 = architecture.pop(0)
+reseau4 = architecture.pop(0)
+reseau5 = architecture.pop(0)
+reseau6 = architecture.pop(0)
+reseau7 = architecture.pop(0)
+reseau8 = architecture.pop(0)
+reseau9 = architecture.pop(0)
+reseau10 = architecture.pop(0)
+reseau11 = architecture.pop(0)
+test1 = descente_rap_reseau(reseau1, DistancesPim, 1000)
+test2 = descente_rap_reseau(reseau2, DistancesPim, 1)
+test3 = descente_rap_reseau(reseau3, DistancesPim, 1)
+test4 = descente_rap_reseau(reseau4, DistancesPim, 1)
+test5 = descente_rap_reseau(reseau5, DistancesPim, 1)
+test6 = descente_rap_reseau(reseau6, DistancesPim, 1)
+test7 = descente_rap_reseau(reseau7, DistancesPim, 1)
+test8 = descente_rap_reseau(reseau8, DistancesPim, 1)
+test9 = descente_rap_reseau(reseau9, DistancesPim, 1)
+test10 = descente_rap_reseau(reseau10, DistancesPim, 1)
+test11 = descente_rap_reseau(reseau11, DistancesPim, 1)
+architecture = [test1] + [test2] + [test3] + [test4] + [test5] + [test6] + [test7] + [test8] + [test9] + [test10] + [test11]
+print('cout arrivee')
+print(cout_architecture(architecture, DistancesPim))
 
 write_solution(architecture, nbDistribution, 'pim')

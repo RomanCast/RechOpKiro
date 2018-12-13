@@ -27,7 +27,7 @@ def cout_reseau(reseau, distances):
     """prend en entree un reseau de la forme : reseau = [[boucle],[chemin1],...,[cheminkR]]
     et renvoie le cout associe"""
     cout_res = 0
-    boucle = reseau [0]
+    boucle = reseau[0]
     for k in range(len(boucle)-1):
         cout_res = cout_res + distances[boucle[k]][boucle[k+1]]
     cout_res = cout_res + distances[boucle[-1]][boucle[0]]
@@ -60,7 +60,7 @@ def insert_plus_proche(antenne, reseau, distances):
     # en sortie de ce for, noeud_proche contient l'element de la boucle le plus proche de l'antenne a inserer
     for k in range(len(reseau)-1):
         chaine_k = reseau[k+1]
-        if(distances[chaine_k[-1]][antenne]<d_min and len(chaine_k<5)):
+        if(distances[chaine_k[-1]][antenne]<d_min and len(chaine_k)<5):
             noeud_proche = chaine_k[-1]
             d_min = distances[noeud_proche][antenne]
             num_chem = k+1
@@ -75,97 +75,149 @@ def swap_dans_reseau(reseau, distances, i, j, meilleur = True):
     ancien_cout = cout_reseau(reseau, distances)
     boucle = reseau[0]
     if(i in boucle and j in boucle):
-        new_boucle = reseau[0]
+        new_boucle = [reseau[0][k] for k in range (len(boucle))]
         index_i = new_boucle.index(i)
         index_j = new_boucle.index(j)
         new_boucle[index_i] = j
         new_boucle[index_j] = i
-        new_reseau = new_boucle + [reseau[k] for k in range(1, len(reseau))]
+        new_chaines = [reseau[k] for k in range(1, len(reseau))]
+        new_reseau = [new_boucle]
+        new_reseau.extend(new_chaines)
         nouv_cout = cout_reseau(new_reseau, distances)
         if(nouv_cout < ancien_cout):
-            reseau = new_reseau
-            return(nouv_cout-ancien_cout)
-        elif(meilleur == false):
-            reseau = new_reseau
-            return(nouv_cout-ancien_cout)
+            return(new_reseau)
+        else:
+            return(reseau)
+        # elif(meilleur == False):
+        #     reseau = new_reseau
+        #     return(nouv_cout-ancien_cout)
+
     elif(i in boucle):
-        new_boucle = reseau[0]
+        new_boucle = [reseau[0][k] for k in range (len(boucle))]
         index_i = new_boucle.index(i)
         new_boucle[index_i] = j
         antennes_a_attacher = [i]
         new_reseau = [new_boucle]
-        # OK
         for k in range(len(reseau)-1):
-            antennes_a_attacher.extend(reseau[k+1][1:])
+            chaine_k = reseau[k+1]
+            antennes_a_attacher.extend(chaine_k[1:])
         antennes_a_attacher.remove(j)
         for a in antennes_a_attacher:
-            insert_plus_proche(a, Nouv_Res, distances)
-        nouv_cout = cout_reseau(Nouv_Res, distances)
-        if(nouv_cout<ancien_cout):
-            reseau = Nouv_Res
-            return(nouv_cout-ancien_cout)
-        elif(not meilleur):
-            reseau = Nouv_Res
-            return(nouv_cout-ancien_cout)
+            insert_plus_proche(a, new_reseau, distances)
+        nouv_cout = cout_reseau(new_reseau, distances)
+        if(nouv_cout < ancien_cout):
+            return(new_reseau)
+        else:
+            return(reseau)
+        # elif(not meilleur):
+        #     reseau = Nouv_Res
+        #     return(nouv_cout-ancien_cout)`
 
 
-def mod_taille_cycle(R,antenne_dans_c,distances, meilleur = True):
-     ancien_cout = cout_de_reseau(R,distances)
-     Nouv_res = R[::]
-     index_ant = R[0].index(antenne_dans_c)
-     antenne = Nouv_res[0].pop(index_ant)
-     antennes_a_attacher = [antenne]
-     for k in range(len(Nouv_res)-1):
-         if(Nouv_res[k+1][0] == antenne):
-             Nouv_res[k+1].pop(0)
-             antennes_fils = Nouv_res.pop(k+1)
-             antennes_a_attacher.extend(antennes_fils)
+def mod_taille_boucle(reseau , antenne_dans_c, distances, meilleur = True):
+    ancien_cout = cout_reseau(reseau, distances)
+    new_boucle = reseau[0]
+    index_ant = new_boucle.index(antenne_dans_c)
+    antenne = new_boucle.pop(index_ant)
+    antennes_a_attacher = [antenne]
+    new_reseau = new_boucle + [reseau[k] for k in range(1, len(reseau))]
+    for k in range(len(new_reseau)-1):
+        chaine_k = new_reseau[k+1]
+        if(chaine_k[0] == antenne):
+            new_reseau[k+1].pop(0)
+            antennes_fils = new_reseau.pop(k+1)
+            antennes_a_attacher.extend(antennes_fils)
     for ant in antennes_a_attacher:
-        insert_plus_proche(ant, Nouv_res)
-    nouv_cout = cout_de_reseau(Nouv_res,distances)
-    if(nouv_cout<ancien_cout):
-        R = Nouv_res
+        insert_plus_proche(ant, new_reseau, distances)
+    nouv_cout = cout_reseau(new_reseau, distances)
+    if(nouv_cout < ancien_cout):
+        reseau = new_reseau
         return(nouv_cout-ancien_cout)
     elif(meilleur == False):
-        R = Nouv_res
+        reseau = new_reseau
         return(nouv_cout-ancien_cout)
 
 
-def descente_rap_cycle(R, distances, nb_swap):
+def descente_rap_boucle(reseau, distances, nb_swap):
     step = 0
-    while(step<nb_swap):
-            num1 = rd.randint(0,len(R[0])-1)
-            num2 = num1
-            while(num1==num2):
-                num2 = rd.randint(0,len(R[0])-1)
-            swap_dans_reseau(R, distances, R[0][num1], R[0][num2])
-            step = step + 1
-    print(cout_de_reseau(R,distances))
+    boucle = reseau[0]
+    temp = reseau
+    ancien_cout = cout_reseau(reseau, distances)
+    while(step < nb_swap):
+            num1 = rd.randint(1,len(boucle)-1)
+            num2 = rd.randint(1,len(boucle)-1)
+            while(num1 == num2):
+                num2 = rd.randint(1,len(boucle)-1)
+            res = swap_dans_reseau(temp, distances, boucle[num1], boucle[num2])
+            nouv_cout = cout_reseau(res, distances)
+            if (nouv_cout < ancien_cout):
+                temp = res
+                ancien_cout = nouv_cout
+                step = step + 1
+            else:
+                step = step + 1
+    return(temp)
 
-def descente_rap_res(R, distances, nb_swap):
+def descente_rap_reseau(reseau, distances, nb_swap):
     step = 0
-    while(step<nb_swap):
-            num1 = rd.randint(0,len(R[0])-1)
-            num2_chaine = rd.randint(1,len(R)-1)
-            num2_dans_chaine = rd.randint(0, len(R[num2_chaine])-1)
-            swap_dans_reseau(R, distances, R[0][num1], R[num2_chaine][num2_dans_chaine])
+    boucle = reseau[0]
+    temp = [reseau[k] for k in range(len(reseau))]
+    ancien_cout = cout_reseau(reseau, distances)
+    if (len(reseau) > 1):
+        while(step < nb_swap):
+            num1 = rd.randint(1,len(boucle)-1)
+            random_chaine = reseau[rd.randint(1,len(reseau)-1)]
+            num2_dans_chaine = rd.randint(0, len(random_chaine)-1)
+            res = swap_dans_reseau(reseau, distances, boucle[num1], random_chaine[num2_dans_chaine])
+            nouv_cout = cout_reseau(res, distances)
+            if (nouv_cout < ancien_cout):
+                temp = res
+                ancien_cout = nouv_cout
+                step = step + 1
+            else:
+                step = step + 1
+    return(temp)
+
+
+def swap_entre_deux_res(architecture, i, j, distances, meilleur = True):
+    ancien_cout_arch = cout_architecture(architecture, distances)
+    reseau_i = architecture[i]
+    reseau_j = architecture[j]
+    temp = [architecture[k] for k in range(len(architecture))]
+    if (len(reseau_i) > 1 ):
+        new_reseau_i = [reseau_i[k] for k in range(len(reseau_i))]
+        new_reseau_j = [reseau_j[k] for k in range(len(reseau_j))]
+        num_chaine = rd.randint(1, len(reseau_i)-1)
+        while (new_reseau_i[num_chaine] == []):
+            num_chaine = rd.randint(1, len(reseau_i)-1)
+        antenne_transferer = new_reseau_i[num_chaine].pop(-1)
+        insert_plus_proche(antenne_transferer, new_reseau_j, distances)
+        nouv_cout_arch = ancien_cout_arch - cout_reseau(reseau_i, distances) - cout_reseau(reseau_j, distances) + cout_reseau(new_reseau_i, distances) + cout_reseau(new_reseau_j, distances)
+        if(nouv_cout_arch < ancien_cout_arch):
+            temp[i] = new_reseau_i
+            temp[j] = new_reseau_j
+    return(temp2)
+    # elif(meilleur == False):
+    #     architecture[i] = new_reseau_i
+    #     architecture[j] = new_reseau_j
+    #     return(nouv_cout_arch-ancien_cout_arch)
+
+
+def descente_rap_architecture(architecture, distances, nb_swap):
+    step = 0
+    ancien_cout = cout_architecture(architecture, distances)
+    temp = architecture
+    while(step < nb_swap):
+        indice_reseau_1 = rd.randint(0, len(architecture)-1)
+        indice_reseau_2 = rd.randint(0, len(architecture)-1)
+        while (indice_reseau_1 == indice_reseau_2):
+            indice_reseau_2 = rd.randint(0, len(architecture)-1)
+        res = swap_entre_deux_res(temp, indice_reseau_1, indice_reseau_2, distances)
+        nouv_cout = cout_architecture(res, distances)
+        if (nouv_cout < ancien_cout):
+            temp = res
+            ancien_cout = nouv_cout
             step = step + 1
-    print(cout_de_reseau(R,distances))
-
-
-def swap_entre_deux_res(A,i,j,distances, meilleur = True):
-    ancien_cout_arch = cout_architecture(A,distances)
-    num_chaine = rd.randint(1, len(A[i])-1)
-    Nouv_R1 = A[i][::]
-    Nouv_R2 = A[j][::]
-    antenne_transferer = Nouv_R1[num_chaine].pop(-1)
-    insert_plus_proche(antenne_transferer, Nouv_R2)
-    nouv_cout_arch = ancien_cout_arch-(cout_de_reseau(A[i], distances)+cout_de_reseau(A[j], distances))+cout_de_reseau(Nouv_R1, distances)+cout_de_reseau(Nouv_R2, distances)
-    if(nouv_cout_arch<ancien_cout_arch):
-        A[i] = Nouv_R1
-        A[j] = Nouv_R2
-        return(nouv_cout_arch-ancien_cout_arch)
-    elif(meilleur == False):
-        A[i] = Nouv_R1
-        A[j] = Nouv_R2
-        return(nouv_cout_arch-ancien_cout_arch)
+        else:
+            step = step + 1
+    return(temp)
