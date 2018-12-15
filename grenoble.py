@@ -141,23 +141,17 @@ while(len(alreadyVisitedAntenna)<nbAntennas):
     insert_plus_proche(newAntenna, reseau)
     architecture[0] = reseau
 
-# res1=[[0, 8, 2, 12, 9, 11, 6, 3, 7, 10, 4, 5]]
-# res2=[[1]]
-# architecture2 = []
-# architecture2.append(res1)
-# architecture2.append(res2)
 
-reseau1 = architecture.pop(0)
-print(reseau1)
+architecture_depart = read_solution('grenoble')
+reseau_depart = architecture_depart.pop(0)
+print(reseau_depart)
 print('cout depart')
-print(cout_reseau(reseau1, DistancesGrenoble)) #2689
-test = descente_rap_boucle(reseau1, DistancesGrenoble, 100)
+print(cout_reseau(reseau_depart, DistancesGrenoble)) #2221
+reseau_arrivee = descente_rap_boucle(reseau_depart, DistancesGrenoble, 1000)
 print('cout arrivee')
-print(cout_reseau(test, DistancesGrenoble))
-print(test)
+print(cout_reseau(reseau_arrivee, DistancesGrenoble))
+print(reseau_arrivee)
 
-architecture = [test] + architecture
-# architecture2 = [test] + architecture2
-#
+architecture_arrivee = [reseau_arrivee] + architecture_depart
 
-write_solution(architecture, nbDistribution, 'grenoble')
+#write_solution(architecture_arrivee, nbDistribution, 'grenoble')

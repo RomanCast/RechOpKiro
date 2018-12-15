@@ -1,5 +1,6 @@
 import numpy as np
 import csv
+import re
 import random as rd
 
 # fonction ecrivant automatiquement une solution dans un fichier .txt
@@ -20,6 +21,79 @@ def write_solution(architecture, nbDistribution, ville):
                 for k in range(len(architecture[i][j])):
                     solution.write(' ' + '%d' %architecture[i][j][k])
                 solution.write("\n")
+
+# fonction qui lit un fichier solution pour en faire une architecture2
+
+def read_solution(ville):
+    file = 'solutions/' + ville + '.txt'
+    solution = open(file, 'r')
+    nbDistribution = 0
+
+    for row in solution:
+        if (row[0] == 'b'):
+            nbDistribution += 1
+
+    nb_chaines = [0]*nbDistribution
+    architecture = []
+    reseau = []
+    boucles = [[]]*nbDistribution
+    chaines = [[]]*nbDistribution
+
+    solution = open(file, 'r')
+    rows = [row.rstrip('\n') for row in solution]
+    for row in rows:
+        if (row[0] == 'b'):
+            k = 1
+            i = rows.index(row)
+            while(i<len(rows)-1 and rows[i+k][0] == 'c'):
+                k=k+1
+                nb_chaines[i]+=1
+
+    for i in range(nbDistribution):
+        chaines[i] = [[]]*nb_chaines[i]
+
+    solution = open(file, 'r')
+    count_b = 0
+    old_b = 0
+    count_c = 0
+    boucle = []
+    temp = []
+
+    for row in solution:
+        row = row.rstrip('\n')
+        for antenne in re.split(' ', row[2:]):
+            if (row[0] == 'b'):
+                boucle.append(int(antenne))
+            elif (row[0] == 'c'):
+                temp.append(int(antenne))
+        boucles[count_b] = [boucle[k] for k in range(len(boucle))]
+        # print('old_b')
+        # print(old_b)
+        # print('count_c')
+        # print(count_c)
+        # print(temp)
+        if (count_c < len(chaines[old_b])):
+            chaines[old_b][count_c] = [temp[k] for k in range(len(temp))]
+        temp = []
+        boucle = []
+        if (row[0] == 'b'):
+            old_b = count_b
+            count_b += 1
+            count_c = 0
+        elif (row[0] == 'c'):
+            count_c += 1
+
+    #print(boucles)
+
+    for i in range(len(boucles)):
+        reseau.append(boucles[i])
+        for k in range(nb_chaines[i]):
+            reseau.append(chaines[i][k])
+        architecture.append(reseau)
+        reseau = []
+
+    return(architecture)
+
 
 # fonctions de louis
 
@@ -167,7 +241,7 @@ def descente_rap_reseau(reseau, distances, nb_swap):
         while(step < nb_swap):
             num1 = rd.randint(1,len(boucle)-1)
             random_chaine = reseau[rd.randint(1,len(reseau)-1)]
-            num2_dans_chaine = rd.randint(0, len(random_chaine)-1)
+            num2_dans_chaine = rd.randint(1, len(random_chaine)-1)
             res = swap_dans_reseau(reseau, distances, boucle[num1], random_chaine[num2_dans_chaine])
             nouv_cout = cout_reseau(res, distances)
             if (nouv_cout < ancien_cout):
