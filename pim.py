@@ -11,11 +11,12 @@ Created on Thu Nov 29 16:00:00 2018
 from utils import *
 from dumb import *
 
+we_are_dumb = False
 dist_matrix = DistMatrix('pim')
 nb_distribution = nbDistribution('pim')
 
-dumb_architecture = dumb_solution('pim')
-print(dumb_architecture)
+if (we_are_dumb):
+    dumb_architecture = dumb_solution('pim')
 
 ##
 

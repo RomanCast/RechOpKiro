@@ -9,11 +9,12 @@ Created on Thu Nov 29 15:57:56 2018
 from utils import *
 from dumb import *
 
+we_are_dumb = False
 dist_matrix = DistMatrix('grenoble')
 nb_distribution = nbDistribution('grenoble')
 
-dumb_architecture = dumb_solution('grenoble')
-print(dumb_architecture)
+if (we_are_dumb):
+    dumb_architecture = dumb_solution('grenoble')
 
 ##
 
