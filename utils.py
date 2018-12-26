@@ -2,6 +2,7 @@ import numpy as np
 import csv
 import re
 import random as rd
+import copy
 
 # fonction ecrivant automatiquement une solution dans un fichier .txt
 def write_solution(architecture, nbDistribution, ville):
@@ -145,6 +146,10 @@ def insert_plus_proche(antenne, reseau, distances):
 
 # OK
 
+# swap dans reseau : échange deux éléments d'un reseau
+# soit deux éléments de la boucle
+# soit un élément de la boucle avec l'élément à la fin d'une chaine
+
 def swap_dans_reseau(reseau, distances, i, j, meilleur = True):
     ancien_cout = cout_reseau(reseau, distances)
     boucle = reseau[0]
@@ -185,7 +190,8 @@ def swap_dans_reseau(reseau, distances, i, j, meilleur = True):
             return(reseau)
         # elif(not meilleur):
         #     reseau = Nouv_Res
-        #     return(nouv_cout-ancien_cout)`
+        #     return(nouv_cout-ancien_cout)
+
 
 
 def mod_taille_boucle(reseau , antenne_dans_c, distances, meilleur = True):
@@ -218,11 +224,11 @@ def descente_rap_boucle(reseau, distances, nb_swap):
     temp = reseau
     ancien_cout = cout_reseau(reseau, distances)
     while(step < nb_swap):
-            num1 = rd.randint(1,len(boucle)-1)
-            num2 = rd.randint(1,len(boucle)-1)
-            while(num1 == num2):
-                num2 = rd.randint(1,len(boucle)-1)
-            res = swap_dans_reseau(temp, distances, boucle[num1], boucle[num2])
+            index1 = rd.randint(1,len(boucle)-1)
+            index2 = rd.randint(1,len(boucle)-1)
+            while(index1 == index2):
+                index2 = rd.randint(1,len(boucle)-1)
+            res = swap_dans_reseau(temp, distances, boucle[index1], boucle[index2])
             nouv_cout = cout_reseau(res, distances)
             if (nouv_cout < ancien_cout):
                 temp = res
@@ -239,10 +245,12 @@ def descente_rap_reseau(reseau, distances, nb_swap):
     ancien_cout = cout_reseau(reseau, distances)
     if (len(reseau) > 1):
         while(step < nb_swap):
-            num1 = rd.randint(1,len(boucle)-1)
+            index1 = rd.randint(1,len(boucle)-1)
             random_chaine = reseau[rd.randint(1,len(reseau)-1)]
-            num2_dans_chaine = rd.randint(1, len(random_chaine)-1)
-            res = swap_dans_reseau(reseau, distances, boucle[num1], random_chaine[num2_dans_chaine])
+            num2_dans_chaine = rd.randint(0, len(random_chaine)-1)
+            while (num2_dans_chaine == boucle[0]):
+                num2_dans_chaine = rd.randint(0, len(random_chaine)-1)
+            res = swap_dans_reseau(reseau, distances, boucle[index1], random_chaine[num2_dans_chaine])
             nouv_cout = cout_reseau(res, distances)
             if (nouv_cout < ancien_cout):
                 temp = res
@@ -257,10 +265,13 @@ def swap_entre_deux_res(architecture, i, j, distances, meilleur = True):
     ancien_cout_arch = cout_architecture(architecture, distances)
     reseau_i = architecture[i]
     reseau_j = architecture[j]
-    temp = [architecture[k] for k in range(len(architecture))]
+    #temp = [architecture[k] for k in range(len(architecture))]
+    temp = copy.deepcopy(architecture)
     if (len(reseau_i) > 1 ):
-        new_reseau_i = [reseau_i[k] for k in range(len(reseau_i))]
-        new_reseau_j = [reseau_j[k] for k in range(len(reseau_j))]
+        # new_reseau_i = [reseau_i[k] for k in range(len(reseau_i))]
+        # new_reseau_j = [reseau_j[k] for k in range(len(reseau_j))]
+        new_reseau_i = copy.deepcopy(reseau_i)
+        new_reseau_j = copy.deepcopy(reseau_j)
         num_chaine = rd.randint(1, len(reseau_i)-1)
         while (new_reseau_i[num_chaine] == []):
             num_chaine = rd.randint(1, len(reseau_i)-1)
