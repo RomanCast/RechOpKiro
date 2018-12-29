@@ -18,16 +18,36 @@ if (we_are_dumb):
 
 ##
 
+#%% descente dans reseau
+
+# old_res = []
+# new_res = []
+# architecture_depart = read_solution('grenoble')
+# print('cout depart')
+# print(cout_architecture(architecture_depart, dist_matrix))
+#
+# for i in range(nb_distribution):
+#     old_res.append(architecture_depart.pop(0))
+#
+# new_res.append(descente_rap_reseau(old_res[0], dist_matrix, 10000))
+#
+# for i in range(1, nb_distribution):
+#     new_res.append(descente_rap_reseau(old_res[i], dist_matrix, 10000))
+#
+# architecture_arrivee = [new_res[k] for k in range(len(new_res))]
+#
+# print('cout arrivee')
+# print(cout_architecture(architecture_arrivee, dist_matrix))
+
+
+#%% descente dans architecture
+
 architecture_depart = read_solution('grenoble')
-reseau_depart = architecture_depart.pop(0)
-print(reseau_depart)
 print('cout depart')
-print(cout_reseau(reseau_depart, dist_matrix)) #2221
-reseau_arrivee = descente_rap_boucle(reseau_depart, dist_matrix, 1000)
+print(cout_architecture(architecture_depart, dist_matrix))
+architecture_arrivee = descente_rap_architecture(architecture_depart, dist_matrix, 100000)
 print('cout arrivee')
-print(cout_reseau(reseau_arrivee, dist_matrix))
-print(reseau_arrivee)
+print(cout_architecture(architecture_arrivee, dist_matrix))
 
-architecture_arrivee = [reseau_arrivee] + architecture_depart
 
-#write_solution(architecture_arrivee, nb_distribution, 'grenoble')
+write_solution(architecture_arrivee, nb_distribution, 'grenoble')

@@ -42,13 +42,17 @@ def read_solution(ville):
 
     solution = open(file, 'r')
     rows = [row.rstrip('\n') for row in solution]
+    j = -1
     for row in rows:
         if (row[0] == 'b'):
             k = 1
             i = rows.index(row)
-            while(i<len(rows)-1 and rows[i+k][0] == 'c'):
+            j = j+1
+            while(i+k<len(rows) and rows[i+k][0] == 'c'):
                 k=k+1
-                nb_chaines[i]+=1
+                nb_chaines[j]+=1
+
+    print(nb_chaines)
 
     for i in range(nbDistribution):
         chaines[i] = [[]]*nb_chaines[i]
@@ -67,19 +71,15 @@ def read_solution(ville):
                 boucle.append(int(antenne))
             elif (row[0] == 'c'):
                 temp.append(int(antenne))
-        boucles[count_b] = [boucle[k] for k in range(len(boucle))]
-        # print('old_b')
-        # print(old_b)
-        # print('count_c')
-        # print(count_c)
-        # print(temp)
+        if (count_b<nbDistribution):
+            boucles[count_b] = [boucle[k] for k in range(len(boucle))]
         if (count_c < len(chaines[old_b])):
             chaines[old_b][count_c] = [temp[k] for k in range(len(temp))]
         temp = []
         boucle = []
         if (row[0] == 'b'):
             old_b = count_b
-            count_b += 1
+            count_b = count_b + 1
             count_c = 0
         elif (row[0] == 'c'):
             count_c += 1
@@ -188,10 +188,30 @@ def swap_dans_reseau(reseau, distances, i, j, meilleur = True):
             return(new_reseau)
         else:
             return(reseau)
+
+    elif(j in boucle):
+        new_boucle = [reseau[0][k] for k in range (len(boucle))]
+        index_j = new_boucle.index(j)
+        new_boucle[index_j] = i
+        antennes_a_attacher = [j]
+        new_reseau = [new_boucle]
+        for k in range(len(reseau)-1):
+            chaine_k = reseau[k+1]
+            antennes_a_attacher.extend(chaine_k[1:])
+        antennes_a_attacher.remove(i)
+        for a in antennes_a_attacher:
+            insert_plus_proche(a, new_reseau, distances)
+        nouv_cout = cout_reseau(new_reseau, distances)
+        if(nouv_cout < ancien_cout):
+            return(new_reseau)
+        else:
+            return(reseau)
         # elif(not meilleur):
         #     reseau = Nouv_Res
         #     return(nouv_cout-ancien_cout)
 
+    else:
+        return(reseau)
 
 
 def mod_taille_boucle(reseau , antenne_dans_c, distances, meilleur = True):
@@ -221,21 +241,24 @@ def mod_taille_boucle(reseau , antenne_dans_c, distances, meilleur = True):
 def descente_rap_boucle(reseau, distances, nb_swap):
     step = 0
     boucle = reseau[0]
-    temp = reseau
+    temp = copy.deepcopy(reseau)
     ancien_cout = cout_reseau(reseau, distances)
     while(step < nb_swap):
-            index1 = rd.randint(1,len(boucle)-1)
+        if (len(boucle)<3):
+            break
+        index1 = rd.randint(1,len(boucle)-1)
+        index2 = rd.randint(1,len(boucle)-1)
+        # print('wesh')
+        while(index1 == index2):
             index2 = rd.randint(1,len(boucle)-1)
-            while(index1 == index2):
-                index2 = rd.randint(1,len(boucle)-1)
-            res = swap_dans_reseau(temp, distances, boucle[index1], boucle[index2])
-            nouv_cout = cout_reseau(res, distances)
-            if (nouv_cout < ancien_cout):
-                temp = res
-                ancien_cout = nouv_cout
-                step = step + 1
-            else:
-                step = step + 1
+        res = swap_dans_reseau(temp, distances, boucle[index1], boucle[index2])
+        nouv_cout = cout_reseau(res, distances)
+        if (nouv_cout < ancien_cout):
+            temp = res
+            ancien_cout = nouv_cout
+            step = step + 1
+        else:
+            step = step + 1
     return(temp)
 
 def descente_rap_reseau(reseau, distances, nb_swap):
@@ -248,7 +271,7 @@ def descente_rap_reseau(reseau, distances, nb_swap):
             index1 = rd.randint(1,len(boucle)-1)
             random_chaine = reseau[rd.randint(1,len(reseau)-1)]
             num2_dans_chaine = rd.randint(0, len(random_chaine)-1)
-            while (num2_dans_chaine == boucle[0]):
+            while (random_chaine[num2_dans_chaine] == boucle[0]):
                 num2_dans_chaine = rd.randint(0, len(random_chaine)-1)
             res = swap_dans_reseau(reseau, distances, boucle[index1], random_chaine[num2_dans_chaine])
             nouv_cout = cout_reseau(res, distances)
@@ -263,35 +286,149 @@ def descente_rap_reseau(reseau, distances, nb_swap):
 
 def swap_entre_deux_res(architecture, i, j, distances, meilleur = True):
     ancien_cout_arch = cout_architecture(architecture, distances)
+    new_architecture = [architecture[k] for k in range (len(architecture))]
     reseau_i = architecture[i]
     reseau_j = architecture[j]
-    #temp = [architecture[k] for k in range(len(architecture))]
-    temp = copy.deepcopy(architecture)
-    if (len(reseau_i) > 1 ):
-        # new_reseau_i = [reseau_i[k] for k in range(len(reseau_i))]
-        # new_reseau_j = [reseau_j[k] for k in range(len(reseau_j))]
-        new_reseau_i = copy.deepcopy(reseau_i)
-        new_reseau_j = copy.deepcopy(reseau_j)
-        num_chaine = rd.randint(1, len(reseau_i)-1)
-        while (new_reseau_i[num_chaine] == []):
-            num_chaine = rd.randint(1, len(reseau_i)-1)
-        antenne_transferer = new_reseau_i[num_chaine].pop(-1)
-        insert_plus_proche(antenne_transferer, new_reseau_j, distances)
-        nouv_cout_arch = ancien_cout_arch - cout_reseau(reseau_i, distances) - cout_reseau(reseau_j, distances) + cout_reseau(new_reseau_i, distances) + cout_reseau(new_reseau_j, distances)
+    boucle_i = reseau_i[0]
+    boucle_j = reseau_j[0]
+
+    rd_chaine_i =  reseau_i[rd.randint(0,len(reseau_i)-1)]
+    rd_chaine_j =  reseau_j[rd.randint(0,len(reseau_j)-1)]
+
+    if (len(rd_chaine_i)==1 and len(rd_chaine_j)==1):
+        antenne_i = rd_chaine_i[0]
+        antenne_j = rd_chaine_j[0]
+    elif (len(rd_chaine_i)==1):
+        antenne_i = rd_chaine_i[0]
+        antenne_j = rd_chaine_j[rd.randint(1,len(rd_chaine_j)-1)]
+    elif (len(rd_chaine_j)==1):
+        antenne_j = rd_chaine_j[0]
+        antenne_i = rd_chaine_i[rd.randint(1,len(rd_chaine_i)-1)]
+    else:
+        antenne_i = rd_chaine_i[rd.randint(1,len(rd_chaine_i)-1)]
+        antenne_j = rd_chaine_j[rd.randint(1,len(rd_chaine_j)-1)]
+
+    if(antenne_i in boucle_i and antenne_j in boucle_j):
+        new_boucle_i = [reseau_i[0][k] for k in range (len(boucle_i))]
+        new_boucle_j = [reseau_j[0][k] for k in range (len(boucle_j))]
+        index_i = new_boucle_i.index(antenne_i)
+        index_j = new_boucle_j.index(antenne_j)
+        new_boucle_i[index_i] = antenne_j
+        new_boucle_j[index_j] = antenne_i
+        new_chaines_i = [reseau_i[k] for k in range(1, len(reseau_i))]
+        new_chaines_j = [reseau_j[k] for k in range(1, len(reseau_j))]
+        new_reseau_i = [new_boucle_i]
+        new_reseau_j = [new_boucle_j]
+        new_reseau_i.extend(new_chaines_i)
+        new_reseau_j.extend(new_chaines_j)
+        new_architecture[i] = new_reseau_i
+        new_architecture[j] = new_reseau_j
+        nouv_cout_arch = cout_architecture(new_architecture, distances)
         if(nouv_cout_arch < ancien_cout_arch):
-            temp[i] = new_reseau_i
-            temp[j] = new_reseau_j
-    return(temp2)
+            return(new_architecture)
+        else:
+            return(architecture)
+
+    elif(antenne_i in boucle_i):
+        new_boucle_i = copy.deepcopy(reseau_i[0])
+        new_boucle_j = copy.deepcopy(reseau_j[0])
+        index_i = new_boucle_i.index(antenne_i)
+        new_boucle_i[index_i] = antenne_j
+        antennes_a_attacher_i = []
+        antennes_a_attacher_j = [antenne_i]
+        new_reseau_i = [new_boucle_i]
+        new_reseau_j = [new_boucle_j]
+
+        for k in range(len(reseau_i)-1):
+            chaine_i_k = reseau_i[k+1]
+            antennes_a_attacher_i.extend(chaine_i_k[1:])
+        for a in antennes_a_attacher_i:
+            insert_plus_proche(a, new_reseau_i, distances)
+
+        for k in range(len(reseau_j)-1):
+            chaine_j_k = reseau_j[k+1]
+            antennes_a_attacher_j.extend(chaine_j_k[1:])
+        antennes_a_attacher_j.remove(antenne_j)
+        for a in antennes_a_attacher_j:
+            insert_plus_proche(a, new_reseau_j, distances)
+
+        new_architecture[i] = new_reseau_i
+        new_architecture[j] = new_reseau_j
+        nouv_cout_arch = cout_architecture(new_architecture, distances)
+        if(nouv_cout_arch < ancien_cout_arch):
+            return(new_architecture)
+        else:
+            return(architecture)
+
+    elif(antenne_j in boucle_j):
+        new_boucle_i = copy.deepcopy(reseau_i[0])
+        new_boucle_j = copy.deepcopy(reseau_j[0])
+        index_j = new_boucle_j.index(antenne_j)
+        new_boucle_j[index_j] = antenne_i
+        antennes_a_attacher_j = []
+        antennes_a_attacher_i = [antenne_j]
+        new_reseau_i = [new_boucle_i]
+        new_reseau_j = [new_boucle_j]
+
+        for k in range(len(reseau_j)-1):
+            chaine_j_k = reseau_j[k+1]
+            antennes_a_attacher_j.extend(chaine_j_k[1:])
+        for a in antennes_a_attacher_j:
+            insert_plus_proche(a, new_reseau_j, distances)
+
+        for k in range(len(reseau_i)-1):
+            chaine_i_k = reseau_i[k+1]
+            antennes_a_attacher_i.extend(chaine_i_k[1:])
+        antennes_a_attacher_i.remove(antenne_i)
+        for a in antennes_a_attacher_i:
+            insert_plus_proche(a, new_reseau_i, distances)
+
+        new_architecture[i] = new_reseau_i
+        new_architecture[j] = new_reseau_j
+        nouv_cout_arch = cout_architecture(new_architecture, distances)
+        if(nouv_cout_arch < ancien_cout_arch):
+            return(new_architecture)
+        else:
+            return(architecture)
+
+    else:
+        new_boucle_i = copy.deepcopy(reseau_i[0])
+        new_boucle_j = copy.deepcopy(reseau_j[0])
+        antennes_a_attacher_i = [antenne_j]
+        antennes_a_attacher_j = [antenne_i]
+        new_reseau_i = [new_boucle_i]
+        new_reseau_j = [new_boucle_j]
+
+        for k in range(len(reseau_i)-1):
+            chaine_i_k = reseau_i[k+1]
+            antennes_a_attacher_i.extend(chaine_i_k[1:])
+        antennes_a_attacher_i.remove(antenne_i)
+        for a in antennes_a_attacher_i:
+            insert_plus_proche(a, new_reseau_i, distances)
+
+        for k in range(len(reseau_j)-1):
+            chaine_j_k = reseau_j[k+1]
+            antennes_a_attacher_j.extend(chaine_j_k[1:])
+        antennes_a_attacher_j.remove(antenne_j)
+        for a in antennes_a_attacher_j:
+            insert_plus_proche(a, new_reseau_j, distances)
+
+        new_architecture[i] = new_reseau_i
+        new_architecture[j] = new_reseau_j
+        nouv_cout_arch = cout_architecture(new_architecture, distances)
+        if(nouv_cout_arch < ancien_cout_arch):
+            return(new_architecture)
+        else:
+            return(architecture)
+
     # elif(meilleur == False):
-    #     architecture[i] = new_reseau_i
-    #     architecture[j] = new_reseau_j
-    #     return(nouv_cout_arch-ancien_cout_arch)
+
 
 
 def descente_rap_architecture(architecture, distances, nb_swap):
     step = 0
     ancien_cout = cout_architecture(architecture, distances)
-    temp = architecture
+    temp = copy.deepcopy(architecture)
     while(step < nb_swap):
         indice_reseau_1 = rd.randint(0, len(architecture)-1)
         indice_reseau_2 = rd.randint(0, len(architecture)-1)
