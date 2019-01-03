@@ -24,7 +24,6 @@ def write_solution(architecture, nbDistribution, ville):
                 solution.write("\n")
 
 # fonction qui lit un fichier solution pour en faire une architecture2
-
 def read_solution(ville):
     file = 'solutions/' + ville + '.txt'
     solution = open(file, 'r')
@@ -83,8 +82,6 @@ def read_solution(ville):
             count_c = 0
         elif (row[0] == 'c'):
             count_c += 1
-
-    #print(boucles)
 
     for i in range(len(boucles)):
         reseau.append(boucles[i])
@@ -424,7 +421,6 @@ def swap_entre_deux_res(architecture, i, j, distances, meilleur = True):
     # elif(meilleur == False):
 
 
-
 def descente_rap_architecture(architecture, distances, nb_swap):
     step = 0
     ancien_cout = cout_architecture(architecture, distances)
@@ -442,4 +438,37 @@ def descente_rap_architecture(architecture, distances, nb_swap):
             step = step + 1
         else:
             step = step + 1
+    return(temp)
+
+
+def recuit_simule_architecture(architecture, distances, nb_it = 1000, k=15, Tinit=1000):
+    step = 0
+    Temp = Tinit
+    ancien_cout = cout_architecture(architecture, distances)
+    temp = copy.deepcopy(architecture)
+    while(step < nb_it):
+        indice_reseau_1 = rd.randint(0, len(architecture)-1)
+        indice_reseau_2 = rd.randint(0, len(architecture)-1)
+        while (indice_reseau_1 == indice_reseau_2):
+            indice_reseau_2 = rd.randint(0, len(architecture)-1)
+        res = swap_entre_deux_res(temp, indice_reseau_1, indice_reseau_2, distances)
+        nouv_cout = cout_architecture(res, distances)
+
+        if(step%k == 0):##on fait baisser la temperature
+            Temp = Temp*0.9
+
+        ecart = nouv_cout-ancien_cout##on calcule la variation du cout
+        if (ecart<0):##si on ameliore
+            temp = res
+            ancien_cout = nouv_cout
+            step = step + 1
+
+        else:
+            proba = np.exp(-ecart/Temp)
+            if(rd.random()<proba):
+                temp = res
+                ancien_cout = nouv_cout
+                step = step + 1
+            else:
+                step = step + 1
     return(temp)
