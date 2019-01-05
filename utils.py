@@ -148,6 +148,39 @@ def insert_plus_proche(antenne, reseau, distances):
 
 # OK
 
+def insert_plus_proche_dans_architecture(antenne, architecture, distances):
+    boucle = architecture[0][0]
+    noeud_proche = boucle[0]
+    d_min = distances[noeud_proche][antenne]
+    num_chem = 0
+    compteur = 0 # Va nous permettre de savoir dans quel réseau on se trouve
+    for reseau in architecture:
+        boucle = reseau[0]
+        for x in boucle:
+            if(distances[x][antenne]<d_min):
+                noeud_proche = x
+                d_min = distances[x][antenne]
+                num_chem = 0 # En gros j'enregistre le numéro de chemin du meilleur noeud, mais si on trouve une meilleure antenne dans une boucle, alors il faut réinitialiser num_chem
+                num_res = compteur
+        # en sortie de ce for, noeud_proche contient l'element de la boucle le plus proche de l'antenne a inserer
+        for k in range(len(reseau)-1):
+            chaine_k = reseau[k+1]
+            if (chaine_k == []):
+                test = 1
+            # print('i = {}, j = {}'.format(chaine_k[-1], antenne))
+            # print('distance = {}'.format(distances[chaine_k[-1]][antenne]))
+            else:
+                if(distances[chaine_k[-1]][antenne]<d_min and len(chaine_k)<5):
+                    noeud_proche = chaine_k[-1]
+                    d_min = distances[noeud_proche][antenne]
+                    num_chem = k+1
+                    num_res = compteur
+        compteur += 1
+    if(num_chem == 0):
+        architecture[num_res].append([noeud_proche, antenne])
+    else:
+        architecture[num_res][num_chem].append(antenne)
+
 # swap dans reseau : échange deux éléments d'un reseau
 # soit deux éléments de la boucle
 # soit un élément de la boucle avec l'élément à la fin d'une chaine
