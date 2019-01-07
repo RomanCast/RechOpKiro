@@ -320,7 +320,9 @@ def descente_rap_reseau(reseau, distances, nb_swap):
     boucle = reseau[0]
     temp = copy.deepcopy(reseau)
     ancien_cout = cout_reseau(reseau, distances)
-    if (len(reseau) > 1):
+    if (len(reseau) == 1):
+        temp = descente_rap_boucle(reseau, distances, nb_swap)
+    else:
         while(step < nb_swap):
             random_chaine_1 = reseau[rd.randint(0,len(reseau)-1)]
             random_chaine_2 = reseau[rd.randint(0,len(reseau)-1)]
