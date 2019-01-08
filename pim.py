@@ -42,24 +42,24 @@ if (we_are_dumb):
 
 #%% descente dans architecture
 
-# architecture_depart = read_solution('pim')
-# #print(architecture_depart)
-# print('cout depart')
-# print(cout_architecture(architecture_depart, dist_matrix))
-# architecture_arrivee = descente_rap_architecture(architecture_depart, dist_matrix, 10000)
-# print('cout arrivee')
-# print(cout_architecture(architecture_arrivee, dist_matrix))
-# #print(architecture_arrivee)
+architecture_depart = read_solution('pim')
+#print(architecture_depart)
+print('cout depart')
+print(cout_architecture(architecture_depart, dist_matrix))
+architecture_arrivee = descente_rap_architecture(architecture_depart, dist_matrix, 1000)
+print('cout arrivee')
+print(cout_architecture(architecture_arrivee, dist_matrix))
+#print(architecture_arrivee)
 
 #%% recuit simule dans architecture
 
-print('début recuit simulé')
-architecture_depart = read_solution('pim')
-print('cout depart')
-print(cout_architecture(architecture_depart, dist_matrix))
-architecture_arrivee = recuit_simule_architecture(architecture_depart, dist_matrix, nb_it = 10000, k=15, Tinit=2000)
-print('cout arrivee')
-print(cout_architecture(architecture_arrivee, dist_matrix))
+# print('début recuit simulé')
+# architecture_depart = read_solution('pim')
+# print('cout depart')
+# print(cout_architecture(architecture_depart, dist_matrix))
+# architecture_arrivee = recuit_simule_architecture(architecture_depart, dist_matrix, nb_it = 1000, k=15, Tinit=2000)
+# print('cout arrivee')
+# print(cout_architecture(architecture_arrivee, dist_matrix))
 
 
-write_solution(architecture_arrivee, nb_distribution, 'pim')
+#write_solution(architecture_arrivee, nb_distribution, 'pim')

@@ -134,8 +134,6 @@ def insert_plus_proche(antenne, reseau, distances):
         chaine_k = reseau[k+1]
         if (chaine_k == []):
             test = 1
-        # print('i = {}, j = {}'.format(chaine_k[-1], antenne))
-        # print('distance = {}'.format(distances[chaine_k[-1]][antenne]))
         else:
             if(distances[chaine_k[-1]][antenne]<d_min and len(chaine_k)<5):
                 noeud_proche = chaine_k[-1]
@@ -149,37 +147,97 @@ def insert_plus_proche(antenne, reseau, distances):
 # OK
 
 def insert_plus_proche_dans_architecture(antenne, architecture, distances):
-    boucle = architecture[0][0]
-    noeud_proche = boucle[0]
+    #print('deb= {}'.format(architecture))
+    num_res = -1
+    num_chaine = -1
+    insere = False
+    new_architecture = copy.deepcopy(architecture)
+    temp1 = copy.deepcopy(architecture)
+    temp2 = copy.deepcopy(architecture)
+
+    noeud_proche = temp1[0][0][0]
     d_min = distances[noeud_proche][antenne]
-    num_chem = 0
-    compteur = 0 # Va nous permettre de savoir dans quel réseau on se trouve
-    for reseau in architecture:
-        boucle = reseau[0]
+
+    for new_reseau in new_architecture:
+        #print('new_reseau = {}'.format(new_reseau))
+        boucle = copy.deepcopy(new_reseau[0])
+
         for x in boucle:
-            if(distances[x][antenne]<d_min):
+            if(distances[x][antenne] < d_min):
                 noeud_proche = x
                 d_min = distances[x][antenne]
-                num_chem = 0 # En gros j'enregistre le numéro de chemin du meilleur noeud, mais si on trouve une meilleure antenne dans une boucle, alors il faut réinitialiser num_chem
-                num_res = compteur
-        # en sortie de ce for, noeud_proche contient l'element de la boucle le plus proche de l'antenne a inserer
-        for k in range(len(reseau)-1):
-            chaine_k = reseau[k+1]
-            if (chaine_k == []):
-                test = 1
-            # print('i = {}, j = {}'.format(chaine_k[-1], antenne))
-            # print('distance = {}'.format(distances[chaine_k[-1]][antenne]))
-            else:
-                if(distances[chaine_k[-1]][antenne]<d_min and len(chaine_k)<5):
-                    noeud_proche = chaine_k[-1]
-                    d_min = distances[noeud_proche][antenne]
-                    num_chem = k+1
-                    num_res = compteur
-        compteur += 1
-    if(num_chem == 0):
-        architecture[num_res].append([noeud_proche, antenne])
-    else:
-        architecture[num_res][num_chem].append(antenne)
+                num_res = new_architecture.index(new_reseau)
+                num_chaine = -1
+
+        if (len(new_reseau) > 1):
+            for new_chaine in new_reseau[1:]:
+                if (new_chaine != []):
+                    if(distances[new_chaine[-1]][antenne]<d_min and len(new_chaine)<5):
+                        noeud_proche = new_chaine[-1]
+                        d_min = distances[noeud_proche][antenne]
+                        num_res = new_architecture.index(new_reseau)
+                        num_chaine = new_reseau[1:].index(new_chaine)
+
+    # print('noeud_proche = {}'.format(noeud_proche))
+    # print('num_res = {}'.format(num_res))
+    # print('num_chaine = {}'.format(num_chaine))
+
+    # on tient le noeud le plus proche de l'antenne ainsi que le reseau (num_res) puis la chaine (num_chaine) dans lequels il se trouve
+    # on a : noeud_plus_proche = architecture[num_res][num_chaine+1][-1]
+
+    temp1[num_res].append([temp1[num_res][0][0], antenne])
+    boucle = temp1[num_res][0]
+    new_boucle = temp2[num_res][0]
+    #print('temp1 = {}'.format(temp1))
+    cout_ref = cout_architecture(temp1, distances)
+
+    if (num_chaine == -1): # si on a trouvé le noeud le plus proche dans la boucle
+
+        if (len(boucle) < 30):
+            for i in range(1, len(boucle)):
+                new_boucle.insert(i, antenne)
+                #print('new_architecture = {}'.format(temp2))
+                nouv_cout = cout_architecture(temp2, distances)
+                if (nouv_cout < cout_ref):
+                    cout_ref = nouv_cout
+                    architecture = copy.deepcopy(temp2)
+                    new_boucle.pop(i)
+                else:
+                    new_boucle.pop(i)
+                    architecture = temp1
+        else:
+            architecture = temp1
+
+    else:       # on a trouvé le noeud le plus proche à la fin d'une chaine
+        #print('new_reseau = {}'.format(new_reseau))
+        #print('num chaine = {}'.format(num_chaine))
+        temp4 = copy.deepcopy(architecture)
+        temp3 = copy.deepcopy(architecture)
+        chaine_trouvee_3 = temp3[num_res][num_chaine+1]
+        chaine_trouvee_4 = temp4[num_res][num_chaine+1]
+        #print('chaine_trouvee= {}'.format(chaine_trouvee))
+        chaine_trouvee_4.append(antenne)
+        #print('temp3 = {}'.format(temp3))
+        cout_ref_4 = cout_architecture(temp4, distances)
+
+        if (cout_ref_4 < cout_ref):
+            for i in range(1, len(chaine_trouvee_3)):
+                chaine_trouvee_3.insert(i, antenne)
+                nouv_cout = cout_architecture(temp3, distances)
+                if (nouv_cout < cout_ref_4):
+                    cout_ref_4 = nouv_cout
+                    architecture = copy.deepcopy(temp3)
+                    chaine_trouvee_3.pop()
+                else:
+                    chaine_trouvee_3.pop(i)
+                    architecture = temp4
+
+        else:
+            chaine_trouvee_4.pop()
+            architecture = temp1
+
+    #return(architecture)
+
 
 # swap dans reseau : échange deux éléments d'un reseau
 # soit deux éléments de la boucle
@@ -570,7 +628,8 @@ def swap_entre_deux_res2(architecture, i, j, distances, meilleur = True):
             chaine_i_k = reseau_i[k+1]
             antennes_a_attacher_i.extend(chaine_i_k[1:])
         for a in antennes_a_attacher_i:
-            insert_plus_proche(a, new_reseau_i, distances)
+            insert_plus_proche_dans_architecture(a, new_architecture, distances)
+            #insert_plus_proche(a, new_reseau_i, distances)
 
         for k in range(len(reseau_j)-1):
             chaine_j_k = reseau_j[k+1]
@@ -648,6 +707,146 @@ def swap_entre_deux_res2(architecture, i, j, distances, meilleur = True):
         else:
             return(architecture)
 
+def swap_entre_deux_res3(architecture, i, j, distances, meilleur = True):
+    ancien_cout_arch = cout_architecture(architecture, distances)
+    new_architecture = copy.deepcopy(architecture)
+    reseau_i = architecture[i]
+    reseau_j = architecture[j]
+    boucle_i = reseau_i[0]
+    boucle_j = reseau_j[0]
+
+    rd_chaine_i =  reseau_i[rd.randint(0,len(reseau_i)-1)]
+    rd_chaine_j =  reseau_j[rd.randint(0,len(reseau_j)-1)]
+
+    while (len(rd_chaine_i)==1 or len(rd_chaine_j)==1):
+        rd_chaine_i =  reseau_i[rd.randint(0,len(reseau_i)-1)]
+        rd_chaine_j =  reseau_j[rd.randint(0,len(reseau_j)-1)]
+
+    antenne_i = rd_chaine_i[rd.randint(1,len(rd_chaine_i)-1)]
+    antenne_j = rd_chaine_j[rd.randint(1,len(rd_chaine_j)-1)]
+
+    if(antenne_i in boucle_i and antenne_j in boucle_j):
+        new_boucle_i = copy.deepcopy(boucle_i)
+        new_boucle_j = copy.deepcopy(boucle_j)
+        index_i = new_boucle_i.index(antenne_i)
+        index_j = new_boucle_j.index(antenne_j)
+        new_boucle_i[index_i] = antenne_j
+        new_boucle_j[index_j] = antenne_i
+        new_chaines_i = [reseau_i[k] for k in range(1, len(reseau_i))]
+        new_chaines_j = [reseau_j[k] for k in range(1, len(reseau_j))]
+        new_reseau_i = [new_boucle_i]
+        new_reseau_j = [new_boucle_j]
+        new_reseau_i.extend(new_chaines_i)
+        new_reseau_j.extend(new_chaines_j)
+        new_architecture[i] = new_reseau_i
+        new_architecture[j] = new_reseau_j
+        nouv_cout_arch = cout_architecture(new_architecture, distances)
+        if(nouv_cout_arch < ancien_cout_arch):
+            return(new_architecture)
+        else:
+            return(architecture)
+
+    elif(antenne_i in boucle_i):
+        new_reseau_i = new_architecture[i]
+        new_reseau_j = new_architecture[j]
+        new_boucle_i = new_reseau_i[0]
+        new_boucle_j = new_reseau_j[0]
+        index_i = new_boucle_i.index(antenne_i)
+        new_boucle_i[index_i] = antenne_j
+
+        antennes_a_attacher = {antenne_i}
+
+        for chaine in new_reseau_i[1:]:
+            if antenne_i in chaine:
+                for elem in chaine[1:]:
+                    antennes_a_attacher.add(elem)
+                chaine = []
+
+        for chaine in new_reseau_j[1:]:
+            if antenne_j in chaine:
+                for elem in chaine[1:]:
+                    antennes_a_attacher.add(elem)
+                chaine = []
+
+        # print('att = {}'.format(antennes_a_attacher))
+        # print('j = {}'.format(antenne_j))
+        antennes_a_attacher.remove(antenne_j)
+        temp = copy.deepcopy(new_architecture)
+
+        for a in antennes_a_attacher:
+            insert_plus_proche_dans_architecture(a, new_architecture, distances)
+
+        nouv_cout_arch = cout_architecture(new_architecture, distances)
+
+        if(nouv_cout_arch < ancien_cout_arch):
+            return(new_architecture)
+        else:
+            return(architecture)
+
+    elif(antenne_j in boucle_j):
+        new_reseau_i = new_architecture[i]
+        new_reseau_j = new_architecture[j]
+        new_boucle_i = new_reseau_i[0]
+        new_boucle_j = new_reseau_j[0]
+        index_j = new_boucle_j.index(antenne_j)
+        new_boucle_j[index_j] = antenne_i
+
+        antennes_a_attacher = {antenne_j}
+
+        for chaine in new_reseau_j[1:]:
+            if antenne_j in chaine:
+                for elem in chaine[1:]:
+                    antennes_a_attacher.add(elem)
+                chaine = []
+
+        for chaine in new_reseau_i[1:]:
+            if antenne_i in chaine:
+                for elem in chaine[1:]:
+                    antennes_a_attacher.add(elem)
+                chaine = []
+
+        # print('att = {}'.format(antennes_a_attacher))
+        # print('i = {}'.format(antenne_i))
+        antennes_a_attacher.remove(antenne_i)
+        temp = copy.deepcopy(new_architecture)
+        for a in antennes_a_attacher:
+            insert_plus_proche_dans_architecture(a, new_architecture, distances)
+
+        nouv_cout_arch = cout_architecture(new_architecture, distances)
+
+        if(nouv_cout_arch < ancien_cout_arch):
+            return(new_architecture)
+        else:
+            return(architecture)
+
+    else:
+        new_reseau_i = new_architecture[i]
+        new_reseau_j = new_architecture[j]
+        antennes_a_attacher = set()
+
+        for chaine in new_reseau_i[1:]:
+            if antenne_i in chaine:
+                for elem in chaine[1:]:
+                    antennes_a_attacher.add(elem)
+                chaine = []
+
+        for chaine in new_reseau_j[1:]:
+            if antenne_j in chaine:
+                for elem in chaine[1:]:
+                    antennes_a_attacher.add(elem)
+                chaine = []
+
+        temp = copy.deepcopy(new_architecture)
+        for a in antennes_a_attacher:
+            insert_plus_proche_dans_architecture(a, new_architecture, distances)
+
+        nouv_cout_arch = cout_architecture(new_architecture, distances)
+
+        if(nouv_cout_arch < ancien_cout_arch):
+            return(new_architecture)
+        else:
+            return(architecture)
+
 
 
 def descente_rap_architecture(architecture, distances, nb_swap):
@@ -668,6 +867,7 @@ def descente_rap_architecture(architecture, distances, nb_swap):
         else:
             step = step + 1
     return(temp)
+
 
 
 def recuit_simule_architecture(architecture, distances, nb_it = 1000, k=15, Tinit=1000):
