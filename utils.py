@@ -699,3 +699,15 @@ def recuit_simule_architecture(architecture, distances, nb_it = 1000, k=15, Tini
             else:
                 step = step + 1
     return(temp)
+
+def sous_DistMatrix(reseau, DistMatrix):
+    size = len(reseau)
+    sousDistMatrix = np.zeros((size,size))
+    vectorNode = np.zeros(size)
+    
+    for k in range(size):
+        vectorNode[k] = reseau[k][-1]
+    for i in range(size):
+        for j in range(size):
+            sousDistMatrix[i][j] = DistMatrix[reseau[i][-1]][reseau][j][-1]
+    return sousDistMatrix, vectorNode
