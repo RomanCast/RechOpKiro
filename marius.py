@@ -91,8 +91,14 @@ def admissible(ville):
         distrib+=1
     return(apres)
 
+def longue_boucle(reseau, distances):
+    long = len(reseau[0])
+    while(long > 30):
+        antenne = reseau[0].pop()
+        insert_plus_proche(antenne, reseau, distances)
 
 if __name__ == '__main__':
+<<<<<<< HEAD
     ville = 'nice'
     voyageur(ville)
     print(admissible(ville))
