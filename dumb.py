@@ -165,3 +165,24 @@ def dumb_solution(ville):
         architecture[0] = reseau
 
     return(architecture)
+
+
+def dumb_solution_bis(ville):
+    node_list = NodeList(ville)
+    nb_node = len(node_list)
+    architecture = []
+    node_list_sorted = NodeListSorted(ville)
+
+    for node in range(nb_node):
+        if(node_list[node][2] == 'distribution'):
+            architecture.append([[node]])
+    for node in range(nb_node):
+        if(node_list[node][2] != 'distribution'):
+            index = 1
+            while(node_list_sorted[node][index][1] != 'distribution'):
+                index = index+1
+            distribution = node_list_sorted[node][index][0]
+            for k in range(len(architecture)):
+                if(architecture[k][0][0] == distribution):
+                    architecture[k].append([distribution, node])
+    return(architecture)
