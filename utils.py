@@ -906,10 +906,13 @@ def sous_DistMatrix(reseau, DistMatrix):
     size = len(reseau)
     sousDistMatrix = np.zeros((size,size))
     vectorNode = np.zeros(size)
-    
+
     for k in range(size):
         vectorNode[k] = reseau[k][-1]
     for i in range(size):
         for j in range(size):
-            sousDistMatrix[i][j] = DistMatrix[reseau[i][-1]][reseau][j][-1]
-    return sousDistMatrix, vectorNode
+            print('i={}, j={}'.format(i,j))
+            print('reseau[i][-1]={}, reseau[j][-1]={}'.format(reseau[i][-1],reseau[j][-1]))
+            print('sousDistMatrix[i,j]={}'.format(DistMatrix[reseau[j][-1],reseau[i][-1]]))
+            sousDistMatrix[j,i] = DistMatrix[reseau[j][-1],reseau[i][-1]]
+    return(sousDistMatrix, vectorNode)
