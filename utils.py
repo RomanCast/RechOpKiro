@@ -913,6 +913,6 @@ def sous_DistMatrix(reseau, DistMatrix):
         for j in range(size):
             print('i={}, j={}'.format(i,j))
             print('reseau[i][-1]={}, reseau[j][-1]={}'.format(reseau[i][-1],reseau[j][-1]))
-            print('sousDistMatrix[i,j]={}'.format(DistMatrix[reseau[j][-1],reseau[i][-1]]))
-            sousDistMatrix[j,i] = DistMatrix[reseau[j][-1],reseau[i][-1]]
+            print('sousDistMatrix[i,j]={}'.format(DistMatrix[reseau[i][-1],reseau[j][-1]]))
+            sousDistMatrix[i,j] = DistMatrix[reseau[i][-1],reseau[j][-1]]
     return(sousDistMatrix, vectorNode)
