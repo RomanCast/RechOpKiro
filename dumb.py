@@ -78,7 +78,7 @@ def NodeListSorted(ville):
     temp1 = [ [[] for x in range(nb_node)] for y in range(nb_node)]
     for i in range(nb_node):
         for j in range(nb_node):
-            temp1[i][j] = [dist_matrix[i][j], j]
+            temp1[i][j] = [dist_matrix[j][i], j]
         temp1[i] = sorted(temp1[i], key=takeFirst) # On construit une matrice d'éléments de taille (1,2) contenant la distance entre i et j, et le numéro j de l'élément. Ensuite, une colonne correspond à la liste triée en fonction de la distance de i aux différents éléments j, la première ligne étant donc toujours l'élément i lui même
     temp2 = [ [0 for x in range(nb_node)] for y in range(nb_node)]
     for i in range(nb_node):

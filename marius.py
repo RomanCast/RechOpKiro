@@ -62,3 +62,9 @@ def main(ville):
 
 if __name__ == '__main__':
   main('grenoble')
+
+def longue_boucle(reseau, distances):
+    long = len(reseau[0])
+    while(long > 30):
+        antenne = reseau[0].pop()
+        insert_plus_proche(antenne, reseau, distances)
